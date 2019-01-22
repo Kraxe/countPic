@@ -1,0 +1,24 @@
+const int pinObstaculo = 7;
+int picudosCaidos = 0;
+
+bool hayObstaculo = HIGH;
+
+void setup() {
+  Serial.begin(9600);
+  pinMode(hayObstaculo, INPUT); //Se leen los datos declarando el pin como entrada
+}
+
+void loop() {
+  hayObstaculo = digitalRead(pinObstaculo);
+  //Serial.println(hayObstaculo); 0 = Obstaculo detectado 1 = Despejado
+  if (hayObstaculo == LOW){
+    Serial.println("Obstaculo Detectado");
+    picudosCaidos++;
+  }
+  else{
+    Serial.println("Despejado");
+    
+  }
+  Serial.println(picudosCaidos);
+  delay(1000);
+}

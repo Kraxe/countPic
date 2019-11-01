@@ -36,12 +36,16 @@ const int pinObstaculo = 7;
 int picudosCaidos = 0;
 
 bool hayObstaculo = HIGH;
+//agrego una variable para ir guardando el estado anterior
+//para que trabaje en el loop
+bool estadoAnterior = HIGH;
 
 void setup() {
   // Open serial communications and wait for port to open:
   Serial.begin(57600);
 
-  pinMode(hayObstaculo, INPUT); //Se leen los datos declarando el pin como entrada
+  //estaba mal seteado el pin
+  pinMode(pinObstaculo, INPUT); //Se leen los datos declarando el pin como entrada
 
   Wire.begin();
   rtc.begin();
@@ -94,28 +98,44 @@ void setup() {
 }
 
 void loop() {
-  DateTime now = rtc.now(); //get the current date-time
   hayObstaculo = digitalRead(pinObstaculo);
   //Serial.println(hayObstaculo); 0 = Obstaculo detectado 1 = Despejado
-  if (hayObstaculo == LOW) {
-    Serial.println("Obstaculo Detectado");
-    picudosCaidos++;
-    Serial.println(picudosCaidos);
-    myFile.println(picudosCaidos);
-    myFile.print(now.year(), DEC);
-    myFile.print('/');
-    myFile.print(now.month(), DEC);
-    myFile.print('/');
-    myFile.print(now.date(), DEC);
-    myFile.print(' ');
-    myFile.print(now.hour(), DEC);
-    myFile.print(':');
-    myFile.print(now.minute(), DEC);
-    myFile.print(':');
-    myFile.print(now.second(), DEC);
-    myFile.println();
-    myFile.print(weekDay[now.dayOfWeek()]);
-    myFile.println();
-    myFile.close();
+  if (hayObstaculo != estadoAnterior){
+    if (hayObstaculo == LOW) {
+      //Leo rtc.now() para guardar solo cuando detecto un obstaculo
+      //y no estar leyendo en cada vuelta del loop
+      DateTime now = rtc.now(); //get the current date-time
+      Serial.println("Obstaculo Detectado");
+      picudosCaidos++;
+      Serial.println(picudosCaidos);
+      //Abro el archivo para escritura
+      myFile = SD.open("test.txt", FILE_WRITE);
+      myFile.println('+1 ');
+      myFile.print(now.year(), DEC);
+      myFile.print('/');
+      myFile.print(now.month(), DEC);
+      myFile.print('/');
+      myFile.print(now.date(), DEC);
+      myFile.print(' ');
+      myFile.print(now.hour(), DEC);
+      myFile.print(':');
+      myFile.print(now.minute(), DEC);
+      myFile.print(':');
+      myFile.print(now.second(), DEC);
+      myFile.print(' ');
+//      myFile.println();
+//      myFile.print(weekDay[now.dayOfWeek()]);
+      myFile.print('Total: ' + picudosCaidos);
+//      myFile.println();
+      myFile.close();
+      //cambio de estado
+      estadoAnterior = hayObstaculo;
+      
+    }else{
+      
+      //cambio de estado
+      estadoAnterior = hayObstaculo;
+    }      
   }
+  
 }

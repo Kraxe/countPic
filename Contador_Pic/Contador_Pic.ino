@@ -110,7 +110,7 @@ void loop() {
       Serial.println(picudosCaidos);
       //Abro el archivo para escritura
       myFile = SD.open("test.txt", FILE_WRITE);
-      myFile.println(picudosCaidos);
+      myFile.println('+1 ');
       myFile.print(now.year(), DEC);
       myFile.print('/');
       myFile.print(now.month(), DEC);
@@ -122,9 +122,11 @@ void loop() {
       myFile.print(now.minute(), DEC);
       myFile.print(':');
       myFile.print(now.second(), DEC);
-      myFile.println();
-      myFile.print(weekDay[now.dayOfWeek()]);
-      myFile.println();
+      myFile.print(' ');
+//      myFile.println();
+//      myFile.print(weekDay[now.dayOfWeek()]);
+      myFile.print('Total: ' + picudosCaidos);
+//      myFile.println();
       myFile.close();
       //cambio de estado
       estadoAnterior = hayObstaculo;
